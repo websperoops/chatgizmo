@@ -1,0 +1,11 @@
+#Live Chat PHP Sign UP Robots File
+#Last change NO 14072021
+
+User-agent: *
+Disallow: /admin/
+Disallow: /include/
+Disallow: /class/
+Disallow: /assets/
+Disallow: /img/
+Disallow: /process/
+Disallow: /cache/

@@ -238,7 +238,7 @@ if (!$subpage) {
 
 	// Check and validate
     $verify_response = $jaklic->verify_license(true);
-    if ($verify_response['status'] != true) {
+    if ($verify_response['status'] == true) {
         if (JAK_SUPERADMINACCESS) {
             jak_redirect(JAK_rewrite::jakParseurl('m'));
         } else {

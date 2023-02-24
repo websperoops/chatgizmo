@@ -12,11 +12,14 @@ class JAK_rewrite {
 
 	private $url_seg;
 	private $data = array();
+	public $url;
 	
 	// This constructor can be used for all classes:
 	public function __construct(
-        public string $url
-    ) {}
+		$url
+    ) {
+		 $this->url = $url;
+	}
 	
 	function jakGetseg($var) {
 

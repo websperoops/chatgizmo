@@ -134,7 +134,6 @@ function lcjak_sseJAK(timer) {
 }
 
 function lcjak_sendMSG(msg) {
-
   if (working) return false;
   working = true;
 
@@ -163,7 +162,7 @@ function lcjak_sendMSG(msg) {
   xhrc.open('POST', base_url+'include/chatdata.php?id='+lcjakwidgetid+'&run=sendmsg&lang='+lcjak_lang, true);
 
   // time in milliseconds
-  xhrc.timeout = 3000; 
+  xhrc.timeout = 10000;
 
   // Some sort of an error, let's redo the send button
   xhrc.addEventListener( "error", function( event ) {
@@ -190,6 +189,9 @@ function lcjak_sendMSG(msg) {
           scrollchat = true;
           show_notifiy = true;
           if (data.html) {
+            // remove temporary post
+            document.querySelectorAll(".temp_post").forEach(el => el.remove());
+
             chat_container.insertAdjacentHTML('beforeend', data.html);
             msgfield.setAttribute('placeholder', data.placeholder);
             ulastmsgid = data.lastid;
@@ -240,6 +242,17 @@ function lcjak_sendMSG(msg) {
   formData.append("rlbid", lcjak_session);
   formData.append("customer", lcjak_customer);
 
+  // Add temporary post
+  let date = new Date();
+  date = date.toLocaleTimeString("en-us", { hour: "2-digit", minute: "2-digit"});
+
+  var message = `<div class=\"lc_item lc_user temp_post\"><div class=\"lc_message\">`+msg+`<\/div><div class=\"lc_status\"><i class=\"far fa-clock\"><\/i> `+date+`<span id=\"edited_368\"><\/span><\/div><\/div>`;
+  chat_container.insertAdjacentHTML('beforeend', message);
+  document.getElementById("lc_typing").style.display = "block";
+  msgfield.value = "";
+
+  lcjak_scrollBottom();
+
   // Finally send the data
   xhrc.send(formData);
 
@@ -253,7 +266,6 @@ function lcjak_loadInput() {
 function lcjak_getInput() {
 
   if (loadchat) {
-
     // Let's get the current status of the local storage
     lcjak_chatstatus = localStorage.getItem('lcjak_chatstatus');
 
@@ -298,7 +310,7 @@ function lcjak_getInput() {
                     parent.postMessage('redirecturl::'+data.redirecturl, cross_url);
                 }
             }
-
+            document.getElementById("lc_typing").style.display = "none";
             // Same user, same minute just add it after
             chat_container.insertAdjacentHTML('beforeend', data.html);
             ulastmsgid = data.lastid;

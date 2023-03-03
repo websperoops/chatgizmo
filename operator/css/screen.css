@@ -16468,3 +16468,15 @@ input.highcharts-range-selector {
 #sortTable td:hover{
   cursor:move;
 }
+
+/* WIDGET MESSAGE BOX */
+
+.form-group textarea.widget_cs {
+  border: 1px solid #E3E3E3;
+  border-radius: 30px;
+  overflow: hidden;
+}
+
+.form-group textarea.widget_cs:focus {
+  border: 1px solid #f96332;
+}

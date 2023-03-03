@@ -110,6 +110,8 @@ switch ($page1) {
 					"depid" => $depa,
 					"singleopid" => $jkp['jak_opid'],
 					"lang" => $jkp['jak_lang'],
+					"api_key" => $jkp['jak_api_key'],
+					"prompt" => jak_string_encrypt_decrypt($jkp['jak_prompt']),
 					"feedback" => $jkp['jak_feedback'],
 					"hidewhenoff" => $jkp['jak_hidewhenoff'],
 					"onlymembers" => $jkp['jak_onlymembers'],

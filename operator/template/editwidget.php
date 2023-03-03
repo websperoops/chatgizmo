@@ -23,6 +23,16 @@
 				</div>
 
 				<div class="form-group">
+					<label>API Key</label>
+					<input type="text" name="jak_api_key" class="form-control" value="<?php echo $JAK_FORM_DATA["api_key"];?>">
+				</div>
+
+				<div class="form-group">
+					<label>Initial Prompt</label>
+					<textarea name="jak_prompt" class="widget_cs form-control" rows="4"><?php echo jak_string_encrypt_decrypt($JAK_FORM_DATA["prompt"], false);?></textarea>
+				</div>
+
+				<div class="form-group">
 					<p><label for="jak_lang"><?php echo $jkl["g22"];?></label></p>
 					<select name="jak_lang" class="selectpicker" data-size="4" data-live-search="true">
 						<?php if (isset($lang_files) && is_array($lang_files)) foreach($lang_files as $lf) { ?>

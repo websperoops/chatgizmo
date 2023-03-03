@@ -22,6 +22,9 @@ require_once '../config.php';
 // include the PHP library (if not autoloaded)
 require('../class/class.emoji.php');
 
+// AI configurations
+require_once '../src/config.php';
+
 // Get the client browser
 $ua = new Browser();
 
@@ -872,6 +875,19 @@ switch($switchc) {
 						"class" => "user",
 						"time" => $jakdb->raw("NOW()")]);
 
+						// OpenAI Integration
+						$apikey = $jakdb->get("chatwidget", "api_key", ["id" => $widgetid]);
+						$prompt = $jakdb->get("chatwidget", "prompt", ["id" => $widgetid]);
+
+						$resp = completion($message, $apikey, $prompt);
+
+						$jakdb->insert("transcript", [
+							"name" => 'OpenAI',
+							"message" => $resp,
+							"convid" => $cid,
+							"class" => "admin",
+							"time" => $jakdb->raw("NOW()")]);
+
 					// Now we pick the bot answer if one exists
 					$botanswer = $answerdisp = '';
 					if (!empty($JAK_BOT_ANSWER)) {
@@ -1088,6 +1104,24 @@ switch($switchc) {
 
 						// New Bot, if no one is chatting, bot message available, department match and message the same as question
 						$answer = $botdisp = "";
+
+						// OpenAI Integration
+						$apikey = $jakdb->get("chatwidget", "api_key", ["id" => $widgetid]);
+						$prompt = $jakdb->get("chatwidget", "prompt", ["id" => $widgetid]);
+
+						$history = $jakdb->select("transcript", ["name", "message"], ["convid" => $row['convid']]);
+						$resp = completion($message, $apikey, $prompt, $history);
+
+						$jakdb->insert("transcript", [
+							"name" => 'OpenAI',
+							"message" => $resp,
+							"convid" => $row['convid'],
+							"class" => "admin",
+							"time" => $jakdb->raw("NOW()")]);
+
+						// Update the status after answer
+						$jakdb->update("checkstatus", ["newc" => 1, "typeo" => 0, "newo" => 0, "statuso" => time()], ["convid" => $row['convid']]);
+
 						if (empty($row["operator"]) && !empty($JAK_BOT_ANSWER)) {
 
 							// we set the message to lower case

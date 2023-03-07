@@ -497,6 +497,9 @@ switch($switchc) {
 						"class" => "user",
 						"time" => $jakdb->raw("NOW()")]);
 
+					// OpenAI Integration
+					open_ai_init($message, $widgetid, $cid);
+
 					// Now we pick the bot answer if one exists
 					$botanswer = $answerdisp = '';
 					if (!empty($JAK_BOT_ANSWER)) {
@@ -875,18 +878,8 @@ switch($switchc) {
 						"class" => "user",
 						"time" => $jakdb->raw("NOW()")]);
 
-						// OpenAI Integration
-						$apikey = $jakdb->get("chatwidget", "api_key", ["id" => $widgetid]);
-						$prompt = $jakdb->get("chatwidget", "prompt", ["id" => $widgetid]);
-
-						$resp = completion($message, $apikey, $prompt);
-
-						$jakdb->insert("transcript", [
-							"name" => 'OpenAI',
-							"message" => $resp,
-							"convid" => $cid,
-							"class" => "admin",
-							"time" => $jakdb->raw("NOW()")]);
+					// OpenAI Integration
+					open_ai_init($message, $widgetid, $cid);
 
 					// Now we pick the bot answer if one exists
 					$botanswer = $answerdisp = '';
@@ -1106,18 +1099,7 @@ switch($switchc) {
 						$answer = $botdisp = "";
 
 						// OpenAI Integration
-						$apikey = $jakdb->get("chatwidget", "api_key", ["id" => $widgetid]);
-						$prompt = $jakdb->get("chatwidget", "prompt", ["id" => $widgetid]);
-
-						$history = $jakdb->select("transcript", ["name", "message"], ["convid" => $row['convid']]);
-						$resp = completion($message, $apikey, $prompt, $history);
-
-						$jakdb->insert("transcript", [
-							"name" => 'OpenAI',
-							"message" => $resp,
-							"convid" => $row['convid'],
-							"class" => "admin",
-							"time" => $jakdb->raw("NOW()")]);
+						open_ai_init($message, $widgetid, $row['convid'], true);
 
 						// Update the status after answer
 						$jakdb->update("checkstatus", ["newc" => 1, "typeo" => 0, "newo" => 0, "statuso" => time()], ["convid" => $row['convid']]);
@@ -1519,7 +1501,8 @@ switch($switchc) {
 			// Reset some vars
 			$editedmsg = $showedit = $avaimg = $operabout = '';
 			$otyping = $knockknock = $inchat = $kk = false;
-			$opern = $jkl['g59'];
+			// $opern = $jkl['g59'];
+			$opern = "System Online";
 
 			// Filter get vars
 			$getlang = jak_url_input_filter($_POST["lang"]);
@@ -2302,6 +2285,31 @@ switch($switchc) {
 		die(json_encode(array('status' => false)));
 
 	break;
+
+}
+
+function open_ai_init($message, $widgetid, $convid, $transcript = false) {
+	global $jakdb;
+
+	$apikey = $jakdb->get("chatwidget", "api_key", ["id" => $widgetid]);
+
+	if($prompt = $jakdb->get("chatwidget", "prompt", ["id" => $widgetid]) ){
+		$prompt = jak_string_encrypt_decrypt($prompt, false);
+	}
+
+	$history = "";
+	if($transcript) {
+		$history = $jakdb->select("transcript", ["name", "message"], ["convid" => $convid]);
+	}
+
+	$reply = completion($message, $apikey, $prompt, $history);
+
+	$jakdb->insert("transcript", [
+		"name" => 'OpenAI',
+		"message" => $reply,
+		"convid" => $convid,
+		"class" => "admin",
+		"time" => $jakdb->raw("NOW()")]);
 
 }
 

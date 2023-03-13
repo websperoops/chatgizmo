@@ -190,9 +190,9 @@ function lcjak_sendMSG(msg) {
           show_notifiy = true;
           if (data.html) {
             // remove temporary post
-            document.querySelectorAll(".temp_post").forEach(el => el.remove());
+            // document.querySelectorAll(".temp_post").forEach(el => el.remove());
 
-            chat_container.insertAdjacentHTML('beforeend', data.html);
+            // chat_container.insertAdjacentHTML('beforeend', data.html);
             msgfield.setAttribute('placeholder', data.placeholder);
             ulastmsgid = data.lastid;
             ulastmsg = data.lastmsg;
@@ -245,8 +245,9 @@ function lcjak_sendMSG(msg) {
   // Add temporary post
   let date = new Date();
   date = date.toLocaleTimeString("en-us", { hour: "2-digit", minute: "2-digit"});
+  incLastMsgId =parseInt(ulastmsgid)+1;
 
-  var message = `<div class=\"lc_item lc_user temp_post\"><div class=\"lc_message\">`+msg+`<\/div><div class=\"lc_status\"><i class=\"far fa-clock\"><\/i> `+date+`<span id=\"edited_368\"><\/span><\/div><\/div>`;
+  var message = `<div class=\"lc_item lc_user\" id=\"postid_`+incLastMsgId+`"><div class=\"lc_message\" id="msg`+incLastMsgId+`">`+msg+`<\/div><div class=\"lc_status\"><i class=\"far fa-clock\"><\/i> `+date+`<span><\/span><\/div><\/div>`;
   chat_container.insertAdjacentHTML('beforeend', message);
   document.getElementById("lc_typing").style.display = "block";
   msgfield.value = "";
